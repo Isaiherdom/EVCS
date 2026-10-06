@@ -8,6 +8,18 @@
   <script>window.EVCS_CLOUD_URL = '';</script>
   <meta name="description" content="Entrenador personal de voz, dicción, presencia y persuasión basado en el Elite Vocal Communication System.">
   <meta name="theme-color" content="#0E0D12">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="EVCS">
+  <script>
+    // App instalable: sólo cuando está publicada (http/https), no al abrir el archivo local
+    if (location.protocol.indexOf('http') === 0) {
+      [['manifest', 'manifest.webmanifest'], ['apple-touch-icon', 'apple-touch-icon.png'], ['icon', 'icon-192.png']].forEach(function (l) {
+        var el = document.createElement('link'); el.rel = l[0]; el.href = l[1]; document.head.appendChild(el);
+      });
+    }
+  </script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23FF8A3D'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' font-family='Georgia' font-weight='700' fill='%232A1205'%3EE%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -424,6 +436,27 @@ table.cmp th { color: var(--muted); font-size: 12px; text-transform: uppercase; 
 .mobile-only { display: none; }
 @media (max-width: 860px) { .mobile-only { display: inline-flex; } }
 input[type="time"] { width: 100%; padding: 11px 12px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface-2); color: var(--text); font: inherit; font-weight: 700; }
+
+/* ---------- App instalada (pantalla completa) ---------- */
+@media (display-mode: standalone) {
+  body { padding-top: env(safe-area-inset-top); }
+  .sidebar { padding-top: calc(28px + env(safe-area-inset-top)); }
+}
+
+/* ---------- Ayuda ⓘ ---------- */
+.help-i { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; background: none; color: var(--faint);
+  font: 800 11px/1 Georgia, serif; font-style: italic; cursor: pointer; padding: 0; margin-left: 4px; vertical-align: 1px; }
+.help-i:hover { color: var(--accent); }
+
+button.pill { color: var(--text); font-family: inherit; }
+
+.chip.on { background: color-mix(in srgb, var(--accent) 24%, var(--surface)); }
+@media (max-width: 860px) {
+  .topbar { flex-direction: column-reverse; align-items: stretch; gap: 14px; }
+  .stats-pills { flex-wrap: nowrap; gap: 6px; justify-content: flex-end; }
+  .stats-pills .pill { padding: 6px 9px; font-size: 13px; }
+  .pill-text { display: none; }
+}
 
 </style>
 </head>
@@ -1100,6 +1133,90 @@ window.EVCS = window.EVCS || {};
   ];
 
   E.data.PRACTICE = { QA_CONTEXTS, QA_METHOD, PRESENCE_RUBRIC, BLIND_CRITERIA };
+})(window.EVCS);
+
+</script>
+  <script>/* js/data/help.js */
+/* EVCS Web · Ayuda contextual (ⓘ) para métricas y dimensiones */
+(function (E) {
+  'use strict';
+
+  const METRIC_HELP = {
+    fillersPerMin: {
+      what: 'Cuántas veces por minuto dices "eh", "em", "este", "o sea" y sonidos parecidos para llenar silencios.',
+      why: 'Las muletillas restan autoridad: suenan a duda aunque sepas del tema. Además distraen a quien escucha.',
+      improve: 'Cuando sientas venir una muletilla, cierra la boca y respira: el silencio suena seguro. Practica improvisando sobre temas sorteados.',
+      exercises: ['F6', 'F2', 'E6']
+    },
+    f0SdSt: {
+      what: 'Cuánto sube y baja tu tono al hablar, medido en semitonos (como las notas de un piano). Más variación = voz con más melodía.',
+      why: 'Por debajo de 2 semitonos la voz suena monótona y la atención se pierde. Entre 3 y 5 suena expresiva; mucho más alto puede sonar exagerado.',
+      improve: 'Elige una palabra importante por frase y resáltala con tu tono. Practica decir la misma frase en distintas alturas.',
+      exercises: ['F4', 'V5', 'V7']
+    },
+    fallingPct: {
+      what: 'De tus afirmaciones, qué porcentaje termina con el tono hacia abajo.',
+      why: 'Cerrar hacia abajo transmite certeza. Cerrar hacia arriba hace que una afirmación suene a pregunta o a que pides permiso.',
+      improve: 'Al terminar una idea, deja caer el tono en la última palabra sin bajar el volumen. Grábate diciendo afirmaciones cortas.',
+      exercises: ['F7', 'P8', 'X4']
+    },
+    wpm: {
+      what: 'Palabras por minuto. Si tu navegador no transcribe, se estima por sílabas (marcada como "estimada").',
+      why: 'Muy rápido cuesta seguirte; muy lento aburre. Entre 130 y 160 es cómodo para exponer; las ideas complejas piden ir más lento.',
+      improve: 'Lo importante es controlar la velocidad, no tener una sola. Practica cambiar de "marcha": lento en lo importante, ágil en el contexto.',
+      exercises: ['F3', 'F2', 'D1']
+    },
+    longPausesPerMin: {
+      what: 'Silencios de más de 1 segundo por minuto, sin contar el inicio y el final.',
+      why: 'Las pausas bien colocadas dan tiempo a entender y transmiten control. Sin pausas, todo suena igual de importante.',
+      improve: 'Haz una pausa antes de la idea clave y otra después. Al principio se sienten eternas; para quien escucha son naturales.',
+      exercises: ['F2', 'R4']
+    },
+    accuracy: {
+      what: 'Qué porcentaje de las palabras del texto entendió el reconocimiento de voz cuando lo leíste.',
+      why: 'Es una aproximación a tu claridad: si una máquina no te entiende una palabra, a veces una persona tampoco. Pero el reconocimiento corrige solo, así que no detecta errores finos.',
+      improve: 'Vocales plenas, finales completos (/s/, /d/) y un ritmo ligeramente más lento. Para el detalle por sonido, usa el Modo Dicción.',
+      exercises: ['D1', 'D2', 'A6']
+    },
+    mpt: {
+      what: 'Cuántos segundos sostienes una vocal cómoda sin cortar ni apretar.',
+      why: 'Refleja qué tan eficiente es tu voz: con buen apoyo y cuerdas que cierran bien, el aire rinde más y la voz se cansa menos.',
+      improve: 'No es aguantar a la fuerza: es soltar el aire de forma pareja. Practica respiración costo-diafragmática y exhalación controlada.',
+      exercises: ['R1', 'R2', 'V3']
+    },
+    ddk: {
+      what: 'Cuántas secuencias "pa-ta-ka" completas dices en 5 segundos.',
+      why: 'Mide la agilidad y coordinación de labios y lengua. Una articulación ágil es la base de una dicción clara a cualquier velocidad.',
+      improve: 'Primero lento y preciso con metrónomo; sube la velocidad sólo cuando no haya errores.',
+      exercises: ['A5', 'A3', 'A2']
+    },
+    mattr: {
+      what: 'Qué tan variado es tu vocabulario: proporción de palabras distintas en bloques de 50 palabras.',
+      why: 'Repetir las mismas palabras hace el discurso pobre y predecible. Un vocabulario preciso transmite dominio del tema.',
+      improve: 'Antes de hablar, piensa en 2 o 3 palabras precisas para tu idea central. Practica improvisación y figuras retóricas.',
+      exercises: ['X2', 'E1', 'F5']
+    },
+    snr: {
+      what: 'Diferencia entre el volumen de tu voz y el ruido del lugar.',
+      why: 'Con menos de 15 dB, el ruido contamina las mediciones y los resultados pueden no ser confiables.',
+      improve: 'Graba en un lugar callado, con el micrófono del teléfono a 30–50 cm y sin audífonos Bluetooth.',
+      exercises: []
+    }
+  };
+
+  const DIMENSION_HELP = {
+    clarity: { what: 'Qué tan fácil es entender cada palabra a la primera.', how: 'Se mide con la precisión de lectura (normal y rápida) y tu autoevaluación.', exercises: ['D1', 'D2', 'D4'] },
+    articulation: { what: 'Agilidad y precisión de labios, lengua y mandíbula.', how: 'Pa-ta-ka en 5 segundos y precisión a velocidad rápida, más tu autoevaluación.', exercises: ['A5', 'A6', 'D3'] },
+    resonance: { what: 'Voz llena, que se proyecta y no se cansa.', how: 'Tiempo máximo de fonación (ajustado por normas de voz) y tu autoevaluación.', exercises: ['V1', 'V2', 'V3'] },
+    authority: { what: 'Sonar seguro: afirmaciones firmes y sin muletillas.', how: 'Cierres descendentes (60%) y muletillas por minuto (40%), más tu autoevaluación.', exercises: ['F7', 'F6', 'P8'] },
+    presence: { what: 'Cómo te perciben al verte: postura, mirada, gestos y energía.', how: 'En esta versión depende de tu autoevaluación; tus videos de presencia en Escenario te dan una referencia sugerida.', exercises: ['P1', 'P2', 'P7'] },
+    persuasion: { what: 'Capacidad de que tu mensaje cambie lo que otros piensan o hacen.', how: 'En esta versión depende de tu autoevaluación. Las preguntas difíciles y la evaluación a ciegas te dan una referencia externa.', exercises: ['E4', 'X1', 'E3'] },
+    vocabulary: { what: 'Precisión y variedad de tus palabras.', how: 'Diversidad léxica en tu habla espontánea y tu autoevaluación.', exercises: ['X2', 'E1', 'F5'] },
+    speed: { what: 'Control del ritmo: ir lento o rápido según lo que dices.', how: 'Cuántas de las tres velocidades objetivo logras (±10%) y si mantienes claridad a velocidad rápida.', exercises: ['F3', 'F2'] },
+    expressivity: { what: 'Melodía y color de tu voz; lo contrario de la monotonía.', how: 'Variación de tono en semitonos en tu habla espontánea y tu autoevaluación.', exercises: ['F4', 'V5', 'V7'] }
+  };
+
+  E.data.HELP = { METRIC_HELP, DIMENSION_HELP };
 })(window.EVCS);
 
 </script>
@@ -2407,7 +2524,12 @@ window.EVCS = window.EVCS || {};
     if (c.enabled && (c.dirty || !c.lastSync || Date.now() - new Date(c.lastSync) > 36e5)) setTimeout(push, 4000);
   }
 
+  async function feedback(payload) {
+    return call(Object.assign({ action: 'feedback' }, payload));
+  }
+
   E.cloud = {
+    feedback,
     init, push, schedule, load, applyRemote, describe, enable, disable, keyFor,
     config: readCfg, url, setUrl, embeddedUrl, summary,
     lastBackup, markBackup, downloadBackup, backupDue,
@@ -2622,6 +2744,36 @@ window.EVCS = window.EVCS || {};
     return `meta ${def.better === 'down' ? '<' : '≥'} ${def.target}${def.unit === '%' ? '%' : def.unit ? ' ' + def.unit : ''}`;
   }
 
+  // ---------- ayuda contextual ----------
+  const helpBtn = (key, kind = 'metric') => `<button class="help-i" data-help="${kind}:${key}" aria-label="¿Qué significa?" title="¿Qué significa?">i</button>`;
+
+  function exerciseChips(codes) {
+    if (!codes || !codes.length) return '';
+    return `<div class="card-title mt">Ejercicios que ayudan</div><div class="chips mt">${codes.map(c => E.data.EX[c] ? `<button class="chip" data-help-ex="${c}">${c} · ${esc(E.data.EX[c].name)}</button>` : '').join('')}</div>`;
+  }
+
+  function showHelp(ref) {
+    const [kind, key] = String(ref).split(':');
+    let title = '', body = '';
+    if (kind === 'metric') {
+      const h = E.data.HELP.METRIC_HELP[key], def = E.data.METRICS[key];
+      if (!h || !def) return;
+      title = def.label;
+      body = `<div class="stack"><div><div class="card-title">Qué es</div><p class="muted mt">${esc(h.what)}</p></div>
+        <div><div class="card-title">Por qué importa</div><p class="muted mt">${esc(h.why)}</p></div>
+        ${key !== 'snr' ? `<div class="row"><span class="tag ok">${targetText(key)}</span></div>` : ''}
+        <div class="callout"><b>Cómo mejorarla:</b> ${esc(h.improve)}</div>${exerciseChips(h.exercises)}</div>`;
+    } else {
+      const h = E.data.HELP.DIMENSION_HELP[key], dim = E.data.DIMENSIONS.find(d => d.key === key);
+      if (!h || !dim) return;
+      title = dim.label;
+      body = `<div class="stack"><div><div class="card-title">Qué mide</div><p class="muted mt">${esc(h.what)}</p></div>
+        <div><div class="card-title">Cómo se calcula</div><p class="muted mt">${esc(h.how)} Puntaje final = 60% medición objetiva + 40% evaluación subjetiva.</p></div>${exerciseChips(h.exercises)}</div>`;
+    }
+    const m = modal({ title, body, actions: [{ label: 'Entendido', cls: 'primary' }] });
+    $$('[data-help-ex]', m.el).forEach(b => b.onclick = () => { m.close(); E.forms.exercise(b.dataset.helpEx); });
+  }
+
   const METRIC_ORDER = ['accuracy', 'mpt', 'ddk', 'fillersPerMin', 'f0SdSt', 'fallingPct', 'wpm', 'longPausesPerMin', 'mattr', 'snr'];
 
   function metricsBlock(m, { focus = null, keys = null } = {}) {
@@ -2632,7 +2784,7 @@ window.EVCS = window.EVCS || {};
     return `<div class="metric-grid">${list.map(k => {
       const st = metricStatus(k, m[k]);
       const est = k === 'wpm' && m.wpmEstimated ? ' <span class="faint">(estimada)</span>' : '';
-      return `<div class="metric ${k === focus ? 'focus' : ''}"><div class="l">${E.data.METRICS[k].label}${est}</div><div class="v">${fmt.metric(k, m[k])}</div>
+      return `<div class="metric ${k === focus ? 'focus' : ''}"><div class="l">${E.data.METRICS[k].label}${est} ${helpBtn(k)}</div><div class="v">${fmt.metric(k, m[k])}</div>
         <div class="s">${k === 'snr' ? '' : `<span class="tag ${st}">${st === 'ok' ? '✓ ' : ''}${targetText(k)}</span>`}</div></div>`;
     }).join('')}</div>`;
   }
@@ -2801,7 +2953,7 @@ window.EVCS = window.EVCS || {};
     return api;
   }
 
-  E.ui = { $, $$, esc, fmt, toast, modal, confirmDialog, beep, chime, celebrate, lineChart, radar, spark, ring, heatmap, metricsBlock, metricStatus, targetText, transcriptHtml, recordPanel, isNum };
+  E.ui = { $, $$, esc, fmt, toast, modal, confirmDialog, beep, chime, celebrate, lineChart, radar, spark, ring, heatmap, metricsBlock, metricStatus, targetText, transcriptHtml, recordPanel, isNum, helpBtn, showHelp };
 })(window.EVCS);
 
 </script>
@@ -2935,6 +3087,21 @@ window.EVCS = window.EVCS || {};
     return alerts;
   }
 
+  // Primeros pasos: lista guiada para la primera semana. Se marca sola y desaparece al completarla.
+  function firstSteps() {
+    const st = E.store.get(), p = st.profile;
+    const c = E.cloud ? E.cloud.config() : {};
+    const steps = [
+      { id: 'diag', icon: '📏', title: 'Haz tu diagnóstico EVCS-100', text: '6 pruebas cortas, unos 20 minutos, en un lugar callado.', done: !!E.game.baseline(), href: '#/diagnostico', cta: 'Empezar' },
+      { id: 'sounds', icon: '🗣️', title: 'Chequeo de sonidos', text: '5 minutos para medir los 11 sonidos difíciles del español.', done: !!(st.diction && st.diction.checks.length), href: '#/diccion/chequeo', cta: 'Hacer' },
+      { id: 'session', icon: '▶️', title: 'Tu primera sesión guiada', text: 'Elige tu tiempo abajo y toca "Empezar sesión".', done: st.sessions.some(s => s.completed), action: 'scroll', cta: 'Ir' },
+      { id: 'backup', icon: '🛟', title: 'Respalda tu avance', text: 'Actívalo en la nube con tu código o descarga un respaldo.', done: !!(c.enabled || (E.cloud && E.cloud.lastBackup())), action: 'backup', cta: 'Respaldar' },
+      { id: 'install', icon: '📲', title: 'Instala la app en tu teléfono', text: 'Ícono propio, pantalla completa y avance mejor protegido.', done: E.app.isStandalone() || !!p.installSeen, action: 'install', cta: 'Cómo' }
+    ];
+    const visible = !p.firstStepsDismissed && steps.some(s => !s.done);
+    return { steps, visible, doneCount: steps.filter(s => s.done).length };
+  }
+
   E.views.hoy = {
     render(el) {
       const st = E.store.get(), p = st.profile, week = st.program.week, W = E.data.WEEKS[week - 1];
@@ -2953,11 +3120,21 @@ window.EVCS = window.EVCS || {};
       const focusVal = weekMetricValue(W.metric);
       const mdef = E.data.METRICS[W.metric];
       const alerts = programAlerts();
+      const fs = firstSteps();
+      const nextStep = fs.steps.find(s => !s.done);
       const recentBadges = Object.entries(st.badges).sort((a, b) => b[1].localeCompare(a[1])).slice(0, 4).map(([c]) => E.data.BADGES.find(b => b.code === c)).filter(Boolean);
 
       el.innerHTML = `
         ${st.activeSession ? `<div class="card mt" style="border-color:var(--accent)"><div class="row between"><div><div class="card-title">Tienes una sesión en curso</div><p class="muted small">${st.activeSession.plan.items.filter(i => i.done).length} de ${st.activeSession.plan.items.length} ejercicios completados</p></div><div class="row"><button class="btn ghost sm" data-discard>Descartar</button><a class="btn primary" href="#/sesion">Continuar</a></div></div></div>` : ''}
-        ${!base ? `<div class="hero"><div class="hero-inner row between gap-lg"><div style="max-width:560px"><div class="eyebrow">Paso 1</div><h2 class="display mt">Mide tu punto de partida</h2><p class="muted mt">Tu diagnóstico EVCS-100 personaliza el plan y será la referencia de tu avance. 6 pruebas cortas, unos 20 minutos.</p></div><a class="btn primary big" href="#/diagnostico">Hacer diagnóstico</a></div></div>` : ''}
+        ${fs.visible ? `<div class="card raised mt" data-firststeps>
+          <div class="row between"><div><div class="eyebrow">Primeros pasos · ${fs.doneCount} de ${fs.steps.length}</div><h2 class="display" style="margin-top:6px">Empieza con buen pie</h2></div>
+            <button class="link-btn small" data-fs-hide>Ocultar</button></div>
+          <div class="bar thin accent mt"><span style="width:${fs.doneCount / fs.steps.length * 100}%"></span></div>
+          <div class="list mt">${fs.steps.map(s => `<div class="list-item"><div class="avatar" style="${s.done ? 'opacity:.55' : ''}">${s.done ? '✅' : s.icon}</div>
+            <div class="grow"><b style="${s.done ? 'text-decoration:line-through;opacity:.6' : ''}">${s.title}</b>${s.done ? '' : `<div class="small muted">${s.text}</div>`}</div>
+            ${s.done ? '' : s.href ? `<a class="btn sm ${s === nextStep ? 'primary' : 'ghost'}" href="${s.href}">${s.cta}</a>` : `<button class="btn sm ${s === nextStep ? 'primary' : 'ghost'}" data-fs="${s.action}">${s.cta}</button>`}</div>`).join('')}</div>
+        </div>` : ''}
+        ${!base && !fs.visible ? `<div class="hero"><div class="hero-inner row between gap-lg"><div style="max-width:560px"><div class="eyebrow">Paso 1</div><h2 class="display mt">Mide tu punto de partida</h2><p class="muted mt">Tu diagnóstico EVCS-100 personaliza el plan y será la referencia de tu avance. 6 pruebas cortas, unos 20 minutos.</p></div><a class="btn primary big" href="#/diagnostico">Hacer diagnóstico</a></div></div>` : ''}
 
         <div class="grid grid-3 mt">
           <div class="card raised span-2">
@@ -2982,7 +3159,7 @@ window.EVCS = window.EVCS || {};
 
         ${alerts.length ? `<div class="grid grid-${Math.min(3, alerts.length)} mt">${alerts.map((a, i) => `<div class="card row between"><div class="row" style="flex-wrap:nowrap"><div class="avatar">${a.icon}</div><div><div class="card-title">${esc(a.title)}</div><div class="small muted">${esc(a.text)}</div></div></div>${a.href ? `<a class="btn info sm" href="${a.href}">${a.cta}</a>` : `<button class="btn info sm" data-alert="${i}">${a.cta}</button>`}</div>`).join('')}</div>` : ''}
 
-        ${E.cloud && E.cloud.backupDue() ? `<div class="card mt row between" style="border-color:var(--gold)"><div class="row" style="flex-wrap:nowrap"><div class="avatar">🛟</div><div>
+        ${E.cloud && !fs.visible && E.cloud.backupDue() ? `<div class="card mt row between" style="border-color:var(--gold)"><div class="row" style="flex-wrap:nowrap"><div class="avatar">🛟</div><div>
             <div class="card-title">Respalda tu avance</div><div class="small muted">${E.cloud.config().enabled ? 'Tu respaldo en la nube no se ha actualizado en 7 días.' : 'Tu progreso vive sólo en este navegador. Respáldalo para no perderlo.'}</div></div></div>
             <div class="row">${E.cloud.config().enabled ? '<button class="btn sm info" data-bsync>Respaldar ahora</button>' : '<button class="btn sm info" data-bcloud>☁️ Activar nube</button><button class="btn sm ghost" data-bfile>⬇ Archivo</button>'}</div></div>` : ''}
 
@@ -3046,6 +3223,21 @@ window.EVCS = window.EVCS || {};
       const discard = $('[data-discard]', el);
       if (discard) discard.onclick = () => { E.store.update(s => { s.activeSession = null; }); E.app.render(); };
       $('[data-expo]', el).onclick = () => E.forms.exposure(() => E.app.render());
+      const fsHide = $('[data-fs-hide]', el);
+      if (fsHide) fsHide.onclick = () => { E.store.update(s => { s.profile.firstStepsDismissed = true; }); E.ui.toast('Puedes volver a verlos en Perfil'); E.app.render(); };
+      $$('[data-fs]', el).forEach(b => b.onclick = () => {
+        const a = b.dataset.fs;
+        if (a === 'scroll') { const t = $('[data-start]', el); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); t.focus(); } }
+        if (a === 'install') { E.app.showInstall(); }
+        if (a === 'backup') {
+          E.ui.modal({
+            title: 'Respalda tu avance',
+            body: '<p class="muted">Tu progreso vive en este navegador. Elige cómo protegerlo:</p><div class="stack mt"><div class="callout info small"><b>☁️ En la nube</b> (recomendado): se respalda solo cada vez que practicas y lo recuperas en cualquier teléfono con tu código.</div><div class="callout small"><b>⬇ Archivo</b>: descargas una copia ahora; tendrás que repetirlo cada semana.</div></div>',
+            actions: [{ label: '⬇ Archivo', cls: 'ghost', onClick: () => { E.cloud.downloadBackup(); E.ui.toast('Respaldo descargado', 'ok'); E.app.render(); } },
+              { label: '☁️ En la nube', cls: 'info', onClick: () => { setTimeout(() => E.forms.cloudEnable(() => E.app.render()), 50); } }]
+          });
+        }
+      });
       const bsync = $('[data-bsync]', el); if (bsync) bsync.onclick = async () => { const ok = await E.cloud.push(); E.ui.toast(ok ? 'Respaldado en la nube' : 'No se pudo respaldar ahora', ok ? 'ok' : 'error'); E.app.render(); };
       const bcloud = $('[data-bcloud]', el); if (bcloud) bcloud.onclick = () => E.forms.cloudEnable(() => E.app.render());
       const bfile = $('[data-bfile]', el); if (bfile) bfile.onclick = () => { E.cloud.downloadBackup(); E.ui.toast('Respaldo descargado', 'ok'); E.app.render(); };
@@ -3315,7 +3507,7 @@ window.EVCS = window.EVCS || {};
           ${E.data.DIMENSIONS.map(d => {
             const sc = a.scores[d.key] || {};
             const prev = compare && compare.scores[d.key] ? compare.scores[d.key].D : null;
-            return `<div class="dim-row"><b>${d.label}</b><div><div class="bar ${isNum(sc.D) && sc.D < 50 ? 'accent' : ''}"><span style="width:${isNum(sc.D) ? sc.D : 0}%"></span></div>
+            return `<div class="dim-row"><b>${d.label} ${E.ui.helpBtn(d.key, 'dim')}</b><div><div class="bar ${isNum(sc.D) && sc.D < 50 ? 'accent' : ''}"><span style="width:${isNum(sc.D) ? sc.D : 0}%"></span></div>
               <div class="tiny faint" style="margin-top:4px">Objetivo ${isNum(sc.O) ? Math.round(sc.O) : '—'} · Subjetivo ${isNum(sc.S) ? Math.round(sc.S) : '—'}${isNum(prev) && isNum(sc.D) ? ` · <span class="delta ${sc.D >= prev ? 'up' : 'down'}">${sc.D >= prev ? '+' : ''}${fmt.num(sc.D - prev, 1)}</span>` : ''}${!isNum(sc.O) && ['presence', 'persuasion'].includes(d.key) ? ' · requiere video o evaluadores' : ''}</div></div>
               <b class="center">${isNum(sc.D) ? Math.round(sc.D) : '—'}</b></div>`;
           }).join('')}
@@ -5047,7 +5239,7 @@ window.EVCS = window.EVCS || {};
           const vals = weeklyAverages(k), def = E.data.METRICS[k];
           const lastVal = [...vals].reverse().find(isNum);
           const target = def.better === 'range' ? (def.target[0] + def.target[1]) / 2 : def.target;
-          return `<div class="card"><div class="row between"><b class="small">${def.label}</b><span class="tag ${E.ui.metricStatus(k, lastVal)}">${E.ui.targetText(k)}</span></div>
+          return `<div class="card"><div class="row between"><b class="small">${def.label} ${E.ui.helpBtn(k)}</b><span class="tag ${E.ui.metricStatus(k, lastVal)}">${E.ui.targetText(k)}</span></div>
             <div class="kpi-value mt" style="font-size:26px">${isNum(lastVal) ? fmt.metric(k, lastVal) : '—'}</div>
             <div class="mt">${E.ui.spark(vals, { target })}</div></div>`;
         }).join('')}</div>
@@ -5212,6 +5404,48 @@ window.EVCS = window.EVCS || {};
     });
   };
 
+  // Enviar comentario (a la pestaña "Comentarios" de la hoja; si no hay hoja, compartir o copiar)
+  E.forms.feedback = function (preType) {
+    const st = E.store.get();
+    const route = E.app.parse();
+    const screen = route.name + (route.params.length ? '/' + route.params.join('/') : '');
+    const device = E.cloud.summary().device + ' · ' + (navigator.userAgent.match(/(Edg|Chrome|Firefox|Safari)\/[\d.]+/) || [''])[0];
+    let type = preType || 'Algo falló';
+    const types = [['Algo falló', '🐞'], ['Duda', '❓'], ['Idea', '💡'], ['Me gustó', '❤️']];
+    E.ui.modal({
+      title: 'Enviar comentario',
+      body: `<div class="stack"><p class="muted small">Tu opinión decide qué se mejora. Cuéntalo como se lo dirías a un amigo.</p>
+        <div class="chips">${types.map(([t, i]) => `<button class="chip ${t === type ? 'on' : ''}" data-t="${t}">${i} ${t}</button>`).join('')}</div>
+        <label class="field">Comentario<textarea data-msg rows="5" maxlength="2000" placeholder="Ej. En el diagnóstico, la prueba de pa-ta-ka se detuvo antes de tiempo…"></textarea></label>
+        <label class="check on"><input type="checkbox" data-name checked><span class="small">Incluir mi nombre (${esc((st.profile || {}).name || '')})</span></label>
+        <p class="tiny faint">Se envía también la pantalla donde estás (${esc(screen)}), tu semana y tu tipo de dispositivo, para entender el contexto. Nunca audios ni datos de tus grabaciones.</p>
+        <div class="small" data-out></div></div>`,
+      actions: [{ label: 'Cancelar', cls: 'ghost' }, {
+        label: 'Enviar', cls: 'go', onClick: m => {
+          const msg = $('[data-msg]', m.el).value.trim(), out = $('[data-out]', m.el);
+          if (msg.length < 3) { out.innerHTML = '<span class="tag bad">Escribe tu comentario</span>'; return false; }
+          const payload = { type, message: msg, name: $('[data-name]', m.el).checked ? (st.profile || {}).name : '', screen, week: st.program.week, device, version: E.VERSION };
+          E.store.update(s => { s.feedback = (s.feedback || []).concat({ date: new Date().toISOString(), type, message: msg, sent: false }); });
+          if (E.cloud.url()) {
+            out.innerHTML = '<span class="muted">Enviando…</span>';
+            E.cloud.feedback(payload).then(() => {
+              E.store.update(s => { s.feedback[s.feedback.length - 1].sent = true; });
+              m.close(); E.ui.toast('¡Gracias! Comentario enviado', 'ok');
+            }).catch(err => { out.innerHTML = `<span class="tag bad">No se pudo enviar (${esc(err.message)}). Revisa tu conexión e inténtalo de nuevo.</span>`; });
+          } else {
+            const text = `Comentario EVCS (${type})\n${msg}\n— ${payload.name || 'Anónimo'} · pantalla ${screen} · semana ${payload.week} · ${device} · v${E.VERSION}`;
+            m.close();
+            if (navigator.share) navigator.share({ title: 'Comentario EVCS', text }).catch(() => {});
+            else if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => E.ui.toast('Comentario copiado: pégalo en un mensaje a quien te compartió la app', 'ok'));
+            else E.ui.modal({ title: 'Copia tu comentario', body: `<textarea rows="6" readonly style="width:100%">${esc(text)}</textarea>` });
+          }
+          return false;
+        }
+      }],
+      onMount: m => $$('[data-t]', m).forEach(b => b.onclick = () => { type = b.dataset.t; $$('[data-t]', m).forEach(x => x.classList.toggle('on', x === b)); })
+    });
+  };
+
   function ago(iso) {
     if (!iso) return 'nunca';
     const min = Math.round((Date.now() - new Date(iso)) / 60000);
@@ -5274,6 +5508,11 @@ window.EVCS = window.EVCS || {};
           </div>
           <div class="stack">
             <div class="card stack">
+              <div class="card-title">Ayuda y comentarios</div>
+              <div class="row"><button class="btn sm info" data-fb>💬 Enviar comentario</button><button class="btn sm ghost" data-install>📲 Instalar app</button>${p.firstStepsDismissed ? '<button class="btn sm ghost" data-steps>Ver primeros pasos</button>' : ''}</div>
+              <p class="tiny faint">Versión ${E.VERSION}${E.app.isStandalone() ? ' · app instalada' : ''}</p>
+            </div>
+            <div class="card stack">
               <div class="card-title">Salud vocal</div>
               <div class="row between"><span class="small">Último chequeo: ${st.health ? fmt.date(st.health.date) : '—'}</span><span class="tag ${st.health && st.health.result === 'caution' ? 'warn' : 'ok'}">${st.health && st.health.result === 'caution' ? 'Precaución' : 'Sin alarmas'}</span></div>
               <label class="check ${p.gentle ? 'on' : ''}"><input type="checkbox" data-gentle ${p.gentle ? 'checked' : ''}><span>Modo suave<br><span class="small muted">Sesiones de 5 minutos sin potencia ni proyección.</span></span></label>
@@ -5316,6 +5555,9 @@ window.EVCS = window.EVCS || {};
         E.ui.toast('Abre el archivo descargado para agregarlo a tu calendario', 'ok');
       };
       backupCard($('[data-backup-card]', el));
+      $('[data-fb]', el).onclick = () => E.forms.feedback();
+      $('[data-install]', el).onclick = () => E.app.showInstall();
+      const stp = $('[data-steps]', el); if (stp) stp.onclick = () => { E.store.update(s => { s.profile.firstStepsDismissed = false; }); E.app.go('#/hoy'); };
       $('[data-reset]', el).onclick = async () => {
         if (!(await E.ui.confirmDialog('Se borrarán tu perfil, progreso, evaluaciones y todos los audios de este navegador.', { okLabel: 'Sí, borrar todo', danger: true }))) return;
         if (!(await E.ui.confirmDialog('Última confirmación: esta acción no se puede deshacer.', { okLabel: 'Borrar definitivamente', danger: true }))) return;
@@ -5394,8 +5636,10 @@ window.EVCS = window.EVCS || {};
     const st = E.game.streak(), lv = E.game.level();
     pills.innerHTML = `<span class="pill fire" title="Racha de días">🔥 ${st.current}</span>
       <span class="pill gem" title="Experiencia total">💎 ${E.ui.fmt.num(lv.xp)}</span>
-      <span class="pill crown" title="Nivel">👑 ${lv.level} · ${esc(lv.name)}</span>
+      <span class="pill crown" title="Nivel ${lv.level} · ${esc(lv.name)}">👑 ${lv.level}<span class="pill-text"> · ${esc(lv.name)}</span></span>
+      <button class="pill" data-feedback title="Enviar comentario" style="cursor:pointer">💬</button>
       <a class="pill mobile-only" href="#/perfil" title="Perfil">👤</a>`;
+    const fb = pills.querySelector('[data-feedback]'); if (fb) fb.onclick = () => E.forms.feedback();
     const foot = document.querySelector('[data-side-foot]');
     if (foot) {
       const week = E.store.get().program.week;
@@ -5454,16 +5698,57 @@ window.EVCS = window.EVCS || {};
     refreshChrome();
   }
 
+  // ---------- instalación ----------
+  let installEvent = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; document.dispatchEvent(new CustomEvent('evcs:installable')); });
+  window.addEventListener('appinstalled', () => { installEvent = null; E.ui.toast('¡EVCS instalada en tu pantalla de inicio!', 'ok'); });
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  const platform = () => /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'ios' : /Android/.test(navigator.userAgent) ? 'android' : 'desktop';
+
+  function showInstall() {
+    if (isStandalone()) { E.ui.toast('Ya estás usando la app instalada', 'ok'); return; }
+    if (installEvent) {
+      installEvent.prompt();
+      installEvent.userChoice.then(() => { installEvent = null; });
+      return;
+    }
+    const p = platform();
+    const steps = p === 'ios'
+      ? ['Abre esta página en <b>Safari</b> (no funciona desde otros navegadores en iPhone).', 'Toca el botón <b>Compartir</b> (cuadro con flecha hacia arriba).', 'Elige <b>Agregar a pantalla de inicio</b> y luego <b>Agregar</b>.', 'Abre EVCS desde el ícono naranja: se verá a pantalla completa.']
+      : p === 'android'
+        ? ['Abre esta página en <b>Chrome</b>.', 'Toca el menú <b>⋮</b> arriba a la derecha.', 'Elige <b>Instalar app</b> o <b>Agregar a pantalla de inicio</b>.', 'Abre EVCS desde el ícono naranja.']
+        : ['En Chrome o Edge, busca el ícono de <b>instalar</b> (una pantalla con flecha) al final de la barra de direcciones.', 'También está en el menú <b>⋮ → Instalar EVCS</b>.', 'Para entrenar a diario, lo ideal es instalarla en tu teléfono.'];
+    E.ui.modal({
+      title: 'Instala EVCS',
+      body: `<div class="stack"><p class="muted small">Al instalarla tendrá su propio ícono, se abrirá a pantalla completa y tu avance queda mejor protegido.</p>
+        <ol class="steps-list">${steps.map(s => `<li><span>${s}</span></li>`).join('')}</ol>
+        ${location.protocol.indexOf('http') !== 0 ? '<div class="callout warn small">Estás abriendo el archivo directamente. Para instalarla, ábrela desde su enlace publicado (por ejemplo, en GitHub Pages).</div>' : ''}</div>`,
+      actions: [{ label: 'Entendido', cls: 'primary', onClick: () => { E.store.update(s => { s.profile.installSeen = true; }); } }]
+    });
+  }
+
+  function registerSW() {
+    if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.warn('Sin modo sin conexión:', err.message));
+    }
+  }
+
   function init() {
     E.store.load();
     applyTheme();
     if (E.cloud) E.cloud.init();
+    registerSW();
     window.addEventListener('hashchange', render);
     document.addEventListener('evcs:state', refreshChrome);
+    document.addEventListener('click', e => {
+      const h = e.target.closest('[data-help]');
+      if (h) { e.preventDefault(); e.stopPropagation(); E.ui.showHelp(h.dataset.help); }
+    }, true);
     render();
   }
 
-  E.app = { go, render, refreshChrome, setTitle, applyTheme, rewards, parse };
+  E.VERSION = '1.5.0';
+  E.app = { go, render, refreshChrome, setTitle, applyTheme, rewards, parse, showInstall, isStandalone, platform, canPrompt: () => !!installEvent };
   document.addEventListener('DOMContentLoaded', init);
 })(window.EVCS);
 
